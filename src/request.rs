@@ -1,0 +1,20 @@
+use std::time::Duration;
+
+use anyhow::Result;
+use reqwest::header::HeaderMap;
+
+pub async fn request(cf_who: &str) -> Result<String> {
+    let client = reqwest::ClientBuilder::new()
+        .timeout(Duration::from_secs(10))
+        .build()?;
+
+    let mut headers = HeaderMap::new();
+    headers.insert("cf-who", cf_who.parse()?);
+    let response = client
+        .get("https://www.test.com/synctime")
+        .headers(headers)
+        .send()
+        .await?;
+    let result = response.text().await?;
+    Ok(result)
+}
