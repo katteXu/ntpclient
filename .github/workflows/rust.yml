@@ -80,6 +80,9 @@ jobs:
           path: target/release/ntpclient.exe
 
   release:
+    permissions:
+      contents: write # 允许写入仓库内容
+      packages: write # 如果涉及包管理，允许写入包
     runs-on: ubuntu-latest # 定义作业运行在Ubuntu系统上
     needs: build # 依赖于build作业
 
