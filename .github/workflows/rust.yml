@@ -8,6 +8,9 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: write # 允许写入仓库内容
+      packages: write # 如果涉及包管理，允许写入包
     runs-on: ${{ matrix.os }} # 定义作业运行的操作系统
     strategy:
       matrix:
