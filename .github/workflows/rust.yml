@@ -130,10 +130,10 @@ jobs:
         id: create_release
         uses: actions/create-release@v1 # 创建GitHub release
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }} # 使用GitHub令牌进行身份验证
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用GitHub令牌进行身份验证
         with:
-          tag_name: ${{ github.ref }} # 使用推送的标签名
-          release_name: Release ${{ github.ref }} # 使用推送的标签名作为发布名称
+          tag_name: Default Tag # 使用推送的标签名
+          release_name: Release Default Tag # 使用推送的标签名作为发布名称
           body: |
             Changes in this Release
             - First Change
@@ -145,7 +145,7 @@ jobs:
       - name: Upload Linux x86_64 artifact
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }} # 使用GitHub令牌进行身份验证
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用GitHub令牌进行身份验证
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/ubuntu/ntpclient # 上传的文件路径
@@ -156,7 +156,7 @@ jobs:
       - name: Upload macOS x86_64 artifact
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }} # 使用GitHub令牌进行身份验证
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用GitHub令牌进行身份验证
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/macos/ntpclient # 上传的文件路径
@@ -167,7 +167,7 @@ jobs:
       - name: Upload Windows x86_64 artifact
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }} # 使用GitHub令牌进行身份验证
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用GitHub令牌进行身份验证
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/windows/ntpclient.exe # 上传的文件路径
@@ -178,7 +178,7 @@ jobs:
       - name: Upload Linux aarch64 artifact
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }} # 使用GitHub令牌进行身份验证
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用GitHub令牌进行身份验证
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/ubuntu/ntpclient # 上传的文件路径
@@ -189,7 +189,7 @@ jobs:
       - name: Upload macOS aarch64 artifact
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }} # 使用GitHub令牌进行身份验证
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用GitHub令牌进行身份验证
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/macos/ntpclient # 上传的文件路径
@@ -200,7 +200,7 @@ jobs:
       - name: Upload Windows aarch64 artifact
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }} # 使用GitHub令牌进行身份验证
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用GitHub令牌进行身份验证
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/windows/ntpclient.exe # 上传的文件路径
