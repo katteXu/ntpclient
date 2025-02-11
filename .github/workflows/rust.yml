@@ -4,7 +4,8 @@ name: Build and Release
 
 on:
   push:
-    branches: ["release"] # 当推送符合模式v*.*.*的标签时触发工作流
+    tags:
+      - "v*.*.*" # 当推送符合模式v*.*.*的标签时触发工作流
 
 jobs:
   build:
@@ -138,8 +139,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # 使用GitHub令牌进行身份验证
         with:
-          tag_name: Default Tag # 使用推送的标签名
-          release_name: Release Default Tag # 使用推送的标签名作为发布名称
+          tag_name: ${{ github.ref }} # 使用推送的标签名
+          release_name: Release ${{ github.ref }} # 使用推送的标签名作为发布名称
           body: |
             Changes in this Release
             - First Change
