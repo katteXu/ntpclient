@@ -11,10 +11,17 @@ pub async fn request(cf_who: &str) -> Result<String> {
     let mut headers = HeaderMap::new();
     headers.insert("cf-who", cf_who.parse()?);
     let response = client
-        .get("https://www.test.com/synctime")
+        .get("https://ntp.cloudflarenet.workers.dev")
         .headers(headers)
         .send()
         .await?;
     let result = response.text().await?;
     Ok(result)
+}
+
+#[tokio::test]
+async fn test_request() {
+    let result = request("test").await;
+
+    println!("{:?}", result);
 }

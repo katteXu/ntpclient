@@ -1,6 +1,7 @@
 use anyhow::{anyhow, Result};
 
 use base64::Engine;
+use sysinfo::{ProcessesToUpdate, System};
 #[cfg(target_os = "windows")]
 use windows_sys::Win32::System::SystemInformation::{GetSystemInfo, SYSTEM_INFO};
 
@@ -74,5 +75,48 @@ pub fn get_client_id() -> Result<String> {
     println!("whoami:{}", whoami);
     println!("hostname:{}", hostname);
     let result = base64::engine::general_purpose::STANDARD.encode(client_id);
+    // 截取前 16 位
+    let result = result.get(..10).unwrap_or(&result).to_string();
     Ok(result)
+}
+
+pub fn is_running_process() -> bool {
+    let mut system = System::new_all();
+    system.refresh_processes(ProcessesToUpdate::All, true);
+
+    // 获取当前进程信息
+    let current_pid = sysinfo::get_current_pid().unwrap();
+    let current_process = system.process(current_pid).unwrap();
+    let current_exe = current_process.exe();
+    let current_name = current_exe
+        .unwrap()
+        .file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("")
+        .trim_end_matches(".exe"); // 去除 .exe 后缀
+
+    // 遍历进程列表
+    for process in system.processes().values() {
+        if process.pid() != current_pid {
+            if let Some(exe_path) = process.exe() {
+                let target_name = exe_path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .unwrap_or("")
+                    .trim_end_matches(".exe");
+
+                if target_name == current_name {
+                    return true;
+                }
+            }
+        }
+    }
+
+    false
+}
+
+#[test]
+fn test_get_client_id() {
+    let client_id = get_client_id().unwrap();
+    println!("client_id:{}", client_id);
 }

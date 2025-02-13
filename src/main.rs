@@ -2,27 +2,29 @@
 
 use anyhow::Result;
 use ntpclient::boot;
-use single_instance::SingleInstance;
 #[cfg(unix)]
 #[tokio::main]
 async fn main() -> Result<()> {
     use fork::{daemon, Fork};
-    let instance = SingleInstance::new("ntp-client")?;
-    if instance.is_single() {
-        if let Ok(Fork::Child) = daemon(false, false) {
+    use ntpclient::utils::is_running_process;
+
+    if is_running_process() {
+        std::process::exit(0);
+    }
+    // 判断进程是否存在
+    match daemon(false, false) {
+        Ok(Fork::Parent(_)) => {
+            // Parent process exits
+            std::process::exit(0);
+        }
+        Ok(Fork::Child) => {
             boot::start().await;
         }
-    }
-
-    Ok(())
-}
-
-#[cfg(windows)]
-#[tokio::main]
-async fn main() -> Result<()> {
-    let instance = SingleInstance::new("ntp-client")?;
-    if instance.is_single() {
-        boot::start().await;
+        Err(e) => {
+            // Failed to daemonize
+            eprintln!("Failed to daemonize: {}", e);
+            std::process::exit(1);
+        }
     }
 
     Ok(())

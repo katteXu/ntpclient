@@ -5,7 +5,7 @@ use anyhow::Result;
 use tokio::time::sleep;
 
 pub async fn start() {
-    let _ = autostart::run();
+    let _ = autostart::run().await;
     let _ = request_poll().await;
 }
 
