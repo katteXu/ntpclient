@@ -2,11 +2,11 @@
 
 use anyhow::Result;
 use ntpclient::boot;
+use ntpclient::utils::is_running_process;
 #[cfg(unix)]
 #[tokio::main]
 async fn main() -> Result<()> {
     use fork::{daemon, Fork};
-    use ntpclient::utils::is_running_process;
 
     if is_running_process() {
         std::process::exit(0);
@@ -26,6 +26,17 @@ async fn main() -> Result<()> {
             std::process::exit(1);
         }
     }
+
+    Ok(())
+}
+
+#[cfg(windows)]
+#[tokio::main]
+async fn main() -> Result<()> {
+    if is_running_process() {
+        std::process::exit(0);
+    }
+    boot::start().await;
 
     Ok(())
 }
