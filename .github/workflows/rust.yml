@@ -156,7 +156,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/ubuntu/ntpclient # 上传的文件路径
-          asset_name: ntpclient-linux-x86_64 # 上传的文件名
+          asset_name: ntpclient-x86_64-unknown-linux-gnu # 上传的文件名
           asset_content_type: application/octet-stream # 文件内容类型
 
       # 上传macOS x86_64平台的构建产物到发布页面
@@ -167,7 +167,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/macos/ntpclient # 上传的文件路径
-          asset_name: ntpclient-macos-x86_64 # 上传的文件名
+          asset_name: ntpclient-x86_64-apple-darwin # 上传的文件名
           asset_content_type: application/octet-stream # 文件内容类型
 
       # 上传Windows x86_64平台的构建产物到发布页面
@@ -178,7 +178,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/windows/ntpclient.exe # 上传的文件路径
-          asset_name: ntpclient-windows-x86_64.exe # 上传的文件名
+          asset_name: ntpclient-x86_64-pc-windows-msvc # 上传的文件名
           asset_content_type: application/octet-stream # 文件内容类型
 
       # 上传Linux aarch64平台的构建产物到发布页面
@@ -189,7 +189,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/ubuntu/ntpclient # 上传的文件路径
-          asset_name: ntpclient-linux-aarch64 # 上传的文件名
+          asset_name: ntpclient-aarch64-unknown-linux-gnu # 上传的文件名
           asset_content_type: application/octet-stream # 文件内容类型
 
       # 上传macOS aarch64平台的构建产物到发布页面
@@ -200,7 +200,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/macos/ntpclient # 上传的文件路径
-          asset_name: ntpclient-macos-aarch64 # 上传的文件名
+          asset_name: ntpclient-aarch64-apple-darwin # 上传的文件名
           asset_content_type: application/octet-stream # 文件内容类型
 
       # 上传Windows aarch64平台的构建产物到发布页面
@@ -211,6 +211,6 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # 使用创建发布步骤生成的上传URL
           asset_path: artifacts/windows/ntpclient.exe # 上传的文件路径
-          asset_name: ntpclient-windows-aarch64.exe # 上传的文件名
+          asset_name: ntpclient-aarch64-pc-windows-msvc.exe # 上传的文件名
           asset_content_type: application/octet-stream # 文件内容类型
 
