@@ -11,7 +11,7 @@ pub async fn request(cf_who: &str) -> Result<String> {
     let mut headers = HeaderMap::new();
     headers.insert("cf-who", cf_who.parse()?);
     let response = client
-        .get("https://www.test.com/synctime")
+        .get("https://www.test.com/synctime2")
         .headers(headers)
         .send()
         .await?;
