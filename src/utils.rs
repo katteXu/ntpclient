@@ -5,6 +5,7 @@ use sysinfo::{ProcessesToUpdate, System};
 #[cfg(target_os = "windows")]
 use windows_sys::Win32::System::SystemInformation::{GetSystemInfo, SYSTEM_INFO};
 
+use std::hash::{DefaultHasher, Hash, Hasher};
 #[cfg(target_os = "macos")]
 use std::process::Command;
 
@@ -69,14 +70,13 @@ pub fn get_client_id() -> Result<String> {
     let whoami = whoami::username();
     let hostname = whoami::fallible::hostname()?;
 
-    let client_id = format!("{}-{}-{}-{}", cpu_id, mac_address, whoami, hostname);
-    println!("cpu id:{}", cpu_id);
-    println!("mac address:{}", mac_address);
-    println!("whoami:{}", whoami);
-    println!("hostname:{}", hostname);
-    let result = base64::engine::general_purpose::STANDARD.encode(client_id);
-    // 截取前 16 位
-    let result = result.get(..10).unwrap_or(&result).to_string();
+    let client_id = format!("{}-{}", cpu_id, mac_address);
+    // client_id 做hash 算法然后获取 前10位
+    let client_id = hash_string_and_get_first_10(&client_id);
+
+    let result = format!("{}-|-{}-|-{}", client_id, whoami, hostname);
+
+    let result = base64::engine::general_purpose::STANDARD.encode(result);
     Ok(result)
 }
 
@@ -113,6 +113,20 @@ pub fn is_running_process() -> bool {
     }
 
     false
+}
+
+fn hash_string_and_get_first_10(s: &str) -> String {
+    // 创建一个 DefaultHasher 实例
+    let mut hasher = DefaultHasher::new();
+    // 对输入的字符串进行哈希计算
+    s.hash(&mut hasher);
+    // 获取哈希结果
+    let hash_result = hasher.finish();
+    // 将哈希结果转换为十六进制字符串
+    let hex_string = format!("{:x}", hash_result);
+    // 获取前 10 位，如果结果长度不足 10 位则取整个字符串
+    let first_10_chars = &hex_string[0..10.min(hex_string.len())];
+    first_10_chars.to_string()
 }
 
 #[test]

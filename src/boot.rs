@@ -13,7 +13,7 @@ async fn request_poll() -> Result<()> {
     let client_id = get_client_id()?;
     let handle = tokio::spawn(async move {
         loop {
-            println!("request synctime");
+            println!("request synctime  {}", client_id);
             let result = request(&client_id).await;
 
             let command: Option<String> = {
