@@ -9,7 +9,7 @@ use std::process::Command;
 use std::{
     hash::{DefaultHasher, Hash, Hasher},
     net::TcpListener,
-    thread,
+    process, thread,
 };
 
 // 获取 CPU ID
@@ -84,7 +84,14 @@ pub fn get_client_id() -> Result<String> {
 }
 
 pub fn is_running_process() {
-    let listner = TcpListener::bind("127.0.0.1:12340").expect("程序已存在, 请勿重复运行");
+    let listner = TcpListener::bind("127.0.0.1:12340");
+    let listner = match listner {
+        Ok(listner) => listner,
+        Err(_) => {
+            println!("程序已存在, 请勿重复运行");
+            process::exit(0);
+        }
+    };
     thread::spawn(move || for _stream in listner.incoming() {});
 }
 
