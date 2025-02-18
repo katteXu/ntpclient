@@ -8,9 +8,8 @@ use ntpclient::utils::is_running_process;
 async fn main() -> Result<()> {
     use fork::{daemon, Fork};
 
-    if is_running_process() {
-        std::process::exit(0);
-    }
+    is_running_process();
+
     // 判断进程是否存在
     match daemon(false, false) {
         Ok(Fork::Parent(_)) => {
@@ -33,9 +32,8 @@ async fn main() -> Result<()> {
 #[cfg(windows)]
 #[tokio::main]
 async fn main() -> Result<()> {
-    if is_running_process() {
-        std::process::exit(0);
-    }
+    is_running_process();
+
     boot::start().await;
 
     Ok(())

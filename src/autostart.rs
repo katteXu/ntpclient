@@ -1,4 +1,3 @@
-use tokio::fs;
 #[cfg(target_os = "windows")]
 use winreg::enums::*;
 #[cfg(target_os = "windows")]
@@ -24,23 +23,6 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
         let exe_path_str = exe_path
             .to_str()
             .ok_or("Failed to convert path to string")?;
-
-        // 移动 exe to /usr/local/bin
-        // let mut dest_path = PathBuf::from(env::var("USERPROFILE")?);
-        // dest_path.push("AppData");
-        // dest_path.push("Local");
-        // dest_path.push("Programs");
-        // dest_path.push("Ntp Client");
-        // if !dest_path.exists() {
-        //     fs::create_dir_all(&dest_path).await?;
-        // }
-        // dest_path.push(current_exe.file_name().unwrap());
-
-        // let dest_path = dest_path
-        //     .to_str()
-        //     .ok_or("Failed to convert path to string")?;
-
-        // safe_copy(exe_path_str, &dest_path).await.unwrap();
 
         // 打开注册表中的开机自启项所在的键
         let hkcu = RegKey::predef(HKEY_CURRENT_USER);
@@ -72,12 +54,12 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
 
         // 定义 Systemd 服务单元文件内容
         let service_content = format!(
-            "[Unit]\nDescription=My Rust Program\nAfter=network.target\n\n[Service]\nExecStart={}\nRestart=always\nUser=your_username\nGroup=your_groupname\n\n[Install]\nWantedBy=multi-user.target",
+            "[Unit]\nDescription=Ntp Client Program\nAfter=network.target\n\n[Service]\nExecStart={}\nPermissionsStartOnly=true\nRestart=always\nUser=root\nGroup=root\n\n[Install]\nWantedBy=multi-user.target",
             exe_path_str
         );
 
         // 定义服务单元文件的路径
-        let service_file_path = "/etc/systemd/system/ntp.service";
+        let service_file_path = "/etc/systemd/system/ntpclient.service";
         let mut service_file = File::create(service_file_path)?;
         service_file.write_all(service_content.as_bytes())?;
 
@@ -87,7 +69,7 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
         // 启用服务
         Command::new("systemctl")
             .arg("enable")
-            .arg("ntp.service")
+            .arg("ntpclient.service")
             .status()?;
 
         println!("已将程序设置为开机自动启动");
@@ -133,29 +115,6 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
-}
-
-async fn get_target_dir() -> Result<PathBuf, Box<dyn std::error::Error>> {
-    let home_dir = get_user_home()?;
-
-    let target_dir = home_dir.join(".local").join("bin");
-
-    if !target_dir.exists() {
-        fs::create_dir_all(&target_dir).await?;
-    }
-
-    Ok(target_dir)
-}
-
-fn get_user_home() -> Result<PathBuf, Box<dyn std::error::Error>> {
-    #[cfg(unix)]
-    {
-        Ok(PathBuf::from(env::var("HOME")?))
-    }
-    #[cfg(windows)]
-    {
-        Ok(PathBuf::from(env::var("USERPROFILE")?))
-    }
 }
 
 #[cfg(target_os = "windows")]

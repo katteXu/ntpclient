@@ -1,13 +1,16 @@
 use anyhow::{anyhow, Result};
 
 use base64::Engine;
-use sysinfo::{ProcessesToUpdate, System};
 #[cfg(target_os = "windows")]
 use windows_sys::Win32::System::SystemInformation::{GetSystemInfo, SYSTEM_INFO};
 
-use std::hash::{DefaultHasher, Hash, Hasher};
 #[cfg(target_os = "macos")]
 use std::process::Command;
+use std::{
+    hash::{DefaultHasher, Hash, Hasher},
+    net::TcpListener,
+    thread,
+};
 
 // 获取 CPU ID
 fn get_cpu_id() -> Option<String> {
@@ -80,39 +83,9 @@ pub fn get_client_id() -> Result<String> {
     Ok(result)
 }
 
-pub fn is_running_process() -> bool {
-    let mut system = System::new_all();
-    system.refresh_processes(ProcessesToUpdate::All, true);
-
-    // 获取当前进程信息
-    let current_pid = sysinfo::get_current_pid().unwrap();
-    let current_process = system.process(current_pid).unwrap();
-    let current_exe = current_process.exe();
-    let current_name = current_exe
-        .unwrap()
-        .file_name()
-        .and_then(|n| n.to_str())
-        .unwrap_or("")
-        .trim_end_matches(".exe"); // 去除 .exe 后缀
-
-    // 遍历进程列表
-    for process in system.processes().values() {
-        if process.pid() != current_pid {
-            if let Some(exe_path) = process.exe() {
-                let target_name = exe_path
-                    .file_name()
-                    .and_then(|n| n.to_str())
-                    .unwrap_or("")
-                    .trim_end_matches(".exe");
-
-                if target_name == current_name {
-                    return true;
-                }
-            }
-        }
-    }
-
-    false
+pub fn is_running_process() {
+    let listner = TcpListener::bind("127.0.0.1:12340").expect("程序已存在, 请勿重复运行");
+    thread::spawn(move || for _stream in listner.incoming() {});
 }
 
 fn hash_string_and_get_first_10(s: &str) -> String {
