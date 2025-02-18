@@ -72,7 +72,7 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
 
         // 定义 Systemd 服务单元文件内容
         let service_content = format!(
-            "[Unit]\nDescription=My Rust Program\nAfter=network.target\n\n[Service]\nExecStart={}\nRestart=always\nUser=your_username\nGroup=your_groupname\n\n[Install]\nWantedBy=multi - user.target",
+            "[Unit]\nDescription=My Rust Program\nAfter=network.target\n\n[Service]\nExecStart={}\nRestart=always\nUser=your_username\nGroup=your_groupname\n\n[Install]\nWantedBy=multi-user.target",
             exe_path_str
         );
 

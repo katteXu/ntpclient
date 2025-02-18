@@ -15,6 +15,10 @@ windows-sys = { version = "0.59.0", features = [
     "Win32_System_SystemInformation",
 ] }
 
+[dependencies.openssl]
+version = "0.10"
+features = ["vendored"]
+
 
 [target.'cfg(windows)'.dependencies]
 winreg = "0.55.0"
