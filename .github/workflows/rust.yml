@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }} # 定义作业运行的操作系统
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest] # 定义操作系统矩阵
+        os: [ubuntu-22.04, macos-latest, windows-latest] # 定义操作系统矩阵
         arch: [x86_64, aarch64] # 定义架构矩阵
 
     steps:
@@ -34,18 +34,18 @@ jobs:
 
       # 上传Linux x86_64平台的构建产物
       - name: Upload artifact (Linux)
-        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-latest-ntpclient
+          name: ubuntu-22.04-ntpclient
           path: target/release/ntpclient
 
       # 上传Linux aarch64平台的构建产物
       - name: Upload artifact (Linux aarch64)
-        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'aarch64'
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-latest-ntpclient-aarch64
+          name: ubuntu-22.04-ntpclient-aarch64
           path: target/release/ntpclient
 
       # 上传macOS x86_64平台的构建产物
@@ -84,7 +84,7 @@ jobs:
     permissions:
       contents: write # 允许写入仓库内容
       packages: write # 如果涉及包管理，允许写入包
-    runs-on: ubuntu-latest # 定义作业运行在Ubuntu系统上
+    runs-on: ubuntu-22.04 # 定义作业运行在Ubuntu系统上
     needs: build # 依赖于build作业
 
     steps:
@@ -95,7 +95,7 @@ jobs:
       - name: Download artifact (Linux-x86_64)
         uses: actions/download-artifact@v4
         with:
-          name: ubuntu-latest-ntpclient
+          name: ubuntu-22.04-ntpclient
           path: artifacts/ubuntu
 
       # 下载macOS x86_64平台的构建产物
@@ -116,7 +116,7 @@ jobs:
       - name: Download artifact (Linux-aarch64)
         uses: actions/download-artifact@v4
         with:
-          name: ubuntu-latest-ntpclient-aarch64
+          name: ubuntu-22.04-ntpclient-aarch64
           path: artifacts/ubuntu
 
       # 下载macOS aarch64平台的构建产物
