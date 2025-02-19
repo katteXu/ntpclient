@@ -21,7 +21,6 @@ pub fn request(cf_who: &str) -> Result<String> {
     drop(transfer);
 
     let txt = String::from_utf8_lossy(&dst).to_string();
-    println!("{:?}", txt);
 
     Ok(txt)
 }

@@ -4,20 +4,19 @@ use anyhow::Result;
 use ntpclient::boot;
 use ntpclient::utils::is_running_process;
 #[cfg(unix)]
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     use fork::{daemon, Fork};
 
     is_running_process();
 
     // 判断进程是否存在
-    match daemon(true, true) {
+    match daemon(false, false) {
         Ok(Fork::Parent(_)) => {
             // Parent process exits
             std::process::exit(0);
         }
         Ok(Fork::Child) => {
-            boot::start().await;
+            boot::start();
         }
         Err(e) => {
             // Failed to daemonize
@@ -30,11 +29,10 @@ async fn main() -> Result<()> {
 }
 
 #[cfg(windows)]
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     is_running_process();
 
-    boot::start().await;
+    boot::start();
 
     Ok(())
 }

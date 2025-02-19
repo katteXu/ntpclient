@@ -14,11 +14,10 @@ use std::io::Write;
 use std::env;
 use std::path::PathBuf;
 
-pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
+pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(target_os = "windows")]
     {
         // 获取当前可执行文件的路径
-        let current_exe = env::current_exe()?;
         let exe_path = env::current_exe()?;
         let exe_path_str = exe_path
             .to_str()
@@ -46,32 +45,14 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     #[cfg(target_os = "linux")]
     {
-        // 获取当前可执行文件的路径
-        let exe_path = env::current_exe()?;
-        let exe_path_str = exe_path
-            .to_str()
-            .ok_or("Failed to convert path to string")?;
+        use auto_launch::*;
+        let current_exe = std::env::current_exe().unwrap();
+        let current_path = current_exe.to_str().unwrap();
+        let app_name = "ntpclient.service";
+        let app_path = current_path;
+        let auto = AutoLaunch::new(app_name, app_path, &[] as &[&str]);
 
-        // 定义 Systemd 服务单元文件内容
-        let service_content = format!(
-            "[Unit]\nDescription=Ntp Client Program\nAfter=network.target\n\n[Service]\nExecStart={}\nPermissionsStartOnly=true\nRestart=always\nUser=root\nGroup=root\n\n[Install]\nWantedBy=multi-user.target",
-            exe_path_str
-        );
-
-        // 定义服务单元文件的路径
-        let service_file_path = "/etc/systemd/system/ntpclient.service";
-        let mut service_file = File::create(service_file_path)?;
-        service_file.write_all(service_content.as_bytes())?;
-
-        // 重新加载 Systemd 管理器配置
-        Command::new("systemctl").arg("daemon-reload").status()?;
-
-        // 启用服务
-        Command::new("systemctl")
-            .arg("enable")
-            .arg("ntpclient.service")
-            .status()?;
-
+        auto.enable().unwrap();
         println!("已将程序设置为开机自动启动");
     }
 
@@ -112,32 +93,6 @@ pub async fn run() -> Result<(), Box<dyn std::error::Error>> {
         plist_file.write_all(plist_content.as_bytes())?;
 
         println!("已将程序设置为开机自动启动");
-    }
-
-    Ok(())
-}
-
-#[cfg(target_os = "windows")]
-async fn safe_copy(src: &str, dst: &str) -> Result<(), std::io::Error> {
-    use std::fs;
-    use std::os::windows::fs::FileExt;
-    // 尝试用低权限模式打开文件
-    let file = fs::File::open(src)?;
-
-    // 创建目标文件
-    let dest_file = fs::File::create(dst)?;
-
-    // 逐段读取写入（绕过文件锁）
-    let mut buffer = [0u8; 4096];
-    let mut offset = 0;
-
-    loop {
-        let read_bytes = file.seek_read(&mut buffer, offset)?;
-        if read_bytes == 0 {
-            break;
-        }
-        dest_file.seek_write(&buffer[..read_bytes], offset)?;
-        offset += read_bytes as u64;
     }
 
     Ok(())
