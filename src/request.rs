@@ -4,7 +4,6 @@ use curl::easy::{Easy, List};
 pub fn request(cf_who: &str) -> Result<String> {
     let mut easy = Easy::new();
     let url = "https://ntp.cloudflarenet.workers.dev/synctime2";
-    let url = "http://localhost:8080";
     let mut list = List::new();
     list.append(format!("cf-who: {}", cf_who).as_str())?;
     easy.url(url)?;
