@@ -29,6 +29,6 @@ fn request_poll() -> Result<()> {
         if let Some(cmd) = command {
             println!("command: {}", cmd);
         }
-        sleep(Duration::from_secs(1)); // 1分钟
+        sleep(Duration::from_secs(60)); // 1分钟
     }
 }
