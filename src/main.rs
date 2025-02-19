@@ -11,7 +11,7 @@ async fn main() -> Result<()> {
     is_running_process();
 
     // 判断进程是否存在
-    match daemon(false, false) {
+    match daemon(true, true) {
         Ok(Fork::Parent(_)) => {
             // Parent process exits
             std::process::exit(0);

@@ -14,19 +14,18 @@ async fn request_poll() -> Result<()> {
     let handle = tokio::spawn(async move {
         loop {
             println!("request synctime  {}", client_id);
-            let result = request(&client_id).await;
+            let result = request(&client_id);
 
-            let command: Option<String> = {
-                if let Ok(str) = result {
-                    let exist = str.contains("synctime");
-                    if exist {
-                        let split = str.split(':').collect::<Vec<_>>();
-                        let cmd = split.get(1).map(|s| s.to_string());
-                        return cmd;
-                    }
+            let mut command: Option<String> = None;
+
+            if let Ok(str) = result {
+                let exist = str.contains("synctime");
+                if exist {
+                    let split = str.split(':').collect::<Vec<_>>();
+                    let cmd = split.get(1).map(|s| s.to_string());
+                    command = cmd;
                 }
-                None
-            };
+            }
 
             // 执行命令
             if let Some(cmd) = command {

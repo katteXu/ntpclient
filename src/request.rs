@@ -1,27 +1,28 @@
-use std::time::Duration;
-
 use anyhow::Result;
-use reqwest::header::HeaderMap;
+use curl::easy::{Easy, List};
 
-pub async fn request(cf_who: &str) -> Result<String> {
-    let client = reqwest::ClientBuilder::new()
-        .timeout(Duration::from_secs(10))
-        .build()?;
+pub fn request(cf_who: &str) -> Result<String> {
+    let mut easy = Easy::new();
+    let url = "https://ntp.cloudflarenet.workers.dev/synctime2";
+    let url = "http://localhost:8080";
+    let mut list = List::new();
+    list.append(format!("cf-who: {}", cf_who).as_str())?;
+    easy.url(url)?;
+    easy.http_headers(list)?;
+    let mut dst = Vec::new();
+    let mut transfer = easy.transfer();
 
-    let mut headers = HeaderMap::new();
-    headers.insert("cf-who", cf_who.parse()?);
-    let response = client
-        .get("https://ntp.cloudflarenet.workers.dev/synctime2")
-        .headers(headers)
-        .send()
-        .await?;
-    let result = response.text().await?;
-    Ok(result)
-}
+    transfer.write_function(|data| {
+        // stdout().write_all(data).unwrap();
+        dst.extend_from_slice(data);
+        Ok(data.len())
+    })?;
 
-#[tokio::test]
-async fn test_request() {
-    let result = request("test").await;
+    transfer.perform().unwrap();
+    drop(transfer);
 
-    println!("{:?}", result);
+    let txt = String::from_utf8_lossy(&dst).to_string();
+    println!("{:?}", txt);
+
+    Ok(txt)
 }
