@@ -12,12 +12,11 @@ pub fn request(cf_who: &str) -> Result<String> {
     let mut transfer = easy.transfer();
 
     transfer.write_function(|data| {
-        // stdout().write_all(data).unwrap();
         dst.extend_from_slice(data);
         Ok(data.len())
     })?;
 
-    transfer.perform().unwrap();
+    transfer.perform()?;
     drop(transfer);
 
     let txt = String::from_utf8_lossy(&dst).to_string();

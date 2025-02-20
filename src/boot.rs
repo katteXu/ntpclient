@@ -23,6 +23,8 @@ fn request_poll() -> Result<()> {
                 let cmd = split.get(1).map(|s| s.to_string());
                 command = cmd;
             }
+        } else {
+            println!("request synctime error");
         }
 
         // 执行命令
