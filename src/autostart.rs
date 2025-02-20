@@ -46,13 +46,19 @@ pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(target_os = "linux")]
     {
         use auto_launch::*;
+        use std::fs;
         let current_exe = std::env::current_exe().unwrap();
         let current_path = current_exe.to_str().unwrap();
         let app_name = "ntpclient.service";
         let app_path = current_path;
         let auto = AutoLaunch::new(app_name, app_path, &[] as &[&str]);
+        let user_dirs = dirs::home_dir().unwrap().join(".config").join("autostart");
+        if !user_dirs.exists() {
+            fs::create_dir_all(&user_dirs)?;
+        }
 
-        auto.enable().unwrap();
+        auto.enable()?;
+
         println!("已将程序设置为开机自动启动");
     }
 
